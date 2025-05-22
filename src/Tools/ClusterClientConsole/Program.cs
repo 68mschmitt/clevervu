@@ -72,23 +72,4 @@ if (choice == "y")
     }
 }
 
-// for (;;)
-// {
-//     Console.WriteLine("Who would you like to greet?");
-//     var grainKey = Console.ReadLine();
-//     var greetingGrain = client.GetGrain<IGreetingGrain>(grainKey);
-//
-//     Console.WriteLine("Do you want to change the greeting? y/N");
-//     var customGreeting = Console.ReadLine();
-//
-//     if (customGreeting == "y")
-//     {
-//         Console.WriteLine($"What is your desired greeting for {grainKey}?");
-//         var newGreeting = Console.ReadLine();
-//         if (newGreeting != string.Empty)
-//             await greetingGrain.SetAsync(newGreeting!);
-//     }
-//
-//     Console.WriteLine(await greetingGrain.GetAsync());
-// }
-//
+host.Dispose();
