@@ -1,34 +1,48 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Orleans.Configuration;
 
-var invariant = "System.Data.SqlClient";
-var connectionString = "server=localhost,1433; database=ORLEANS; user id=sa; password=changeMe!; TrustServerCertificate=true;";
+var builder = Host.CreateDefaultBuilder(args);
 
-await Host.CreateDefaultBuilder(args)
-    .UseOrleans(siloBuilder =>
-    {
-        siloBuilder.UseAdoNetClustering(options =>
+builder.ConfigureAppConfiguration((hostingContext, config) =>
         {
-            options.Invariant = invariant;
-            options.ConnectionString = connectionString;
+            var env = hostingContext.HostingEnvironment;
+            config
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings{env.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
+
+            if (env.IsDevelopment())
+                config.AddUserSecrets<Program>();
         });
 
-        siloBuilder.UseAdoNetReminderService(options =>
+builder.UseOrleans((context, siloBuilder) =>
         {
-            options.Invariant = invariant;
-            options.ConnectionString = connectionString;
+            var config = context.Configuration;
+            var orleansConnection = config.GetConnectionString("OrleansDB");
+            siloBuilder.UseAdoNetClustering(options =>
+            {
+                options.Invariant = "System.Data.SqlClient";
+                options.ConnectionString = orleansConnection;
+            });
+
+            siloBuilder.UseAdoNetReminderService(options =>
+            {
+                options.Invariant = "System.Data.SqlClient";
+                options.ConnectionString = orleansConnection;
+            });
+
+            siloBuilder.AddAdoNetGrainStorage("GrainStorageForTest", options =>
+            {
+                options.Invariant = "System.Data.SqlClient";
+                options.ConnectionString = orleansConnection;
+            });
+
+            siloBuilder.Configure<ClusterOptions>(options =>
+            {
+                options.ClusterId = "Clever-Cluster";
+                options.ServiceId = "CleverVu";
+            });
         });
 
-        siloBuilder.AddAdoNetGrainStorage("GrainStorageForTest", options =>
-        {
-            options.Invariant = invariant;
-            options.ConnectionString = connectionString;
-        });
-
-        siloBuilder.Configure<ClusterOptions>(options =>
-        {
-            options.ClusterId = "my-first-cluster";
-            options.ServiceId = "SampleApp";
-        });
-    })
-    .RunConsoleAsync();
+await builder.RunConsoleAsync();
