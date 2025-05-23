@@ -12,6 +12,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.5" />
     <PackageReference Include="Microsoft.Orleans.Client" Version="9.1.2" />
     <PackageReference Include="Microsoft.Orleans.Clustering.Adonet" Version="9.1.2" />
+    <PackageReference Include="Microsoft.Orleans.Streaming" Version="9.1.2" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
   </ItemGroup>
 

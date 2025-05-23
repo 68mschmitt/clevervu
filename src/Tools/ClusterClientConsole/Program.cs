@@ -36,6 +36,8 @@ builder.UseOrleansClient((context, clientBuilder) =>
         options.Invariant = "System.Data.SqlClient";
         options.ConnectionString = orleansConnection;
     });
+
+    clientBuilder.AddMemoryStreams("SMS");
 });
 
 var host = builder.UseConsoleLifetime().Build();
@@ -71,5 +73,7 @@ if (choice == "y")
         _ = Task.Run(greetingGrain.DeactivateAsync);
     }
 }
+
+Console.ReadLine();
 
 host.Dispose();

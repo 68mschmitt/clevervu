@@ -43,6 +43,10 @@ builder.UseOrleans((context, siloBuilder) =>
                 options.ClusterId = "Clever-Cluster";
                 options.ServiceId = "CleverVu";
             });
+
+            siloBuilder
+                .AddMemoryStreams("SMS")
+                .AddMemoryGrainStorage("PubSubStore");
         });
 
 await builder.RunConsoleAsync();
