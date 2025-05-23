@@ -5,7 +5,7 @@ namespace Orleans.Grains.Example;
 
 public class GreetingGrain : Grain, IAsyncObserver<string>, IGreetingGrain
 {
-    private StreamSubscriptionHandle<string> _subscriptionHandle;
+    private StreamSubscriptionHandle<string>? _subscriptionHandle;
     public async override Task OnActivateAsync(CancellationToken token)
     {
         _Greetee = this.GetPrimaryKeyString();
@@ -65,11 +65,6 @@ public class GreetingGrain : Grain, IAsyncObserver<string>, IGreetingGrain
     public Task OnErrorAsync(Exception ex)
     {
         throw new NotImplementedException();
-    }
-
-    Task OnCompletedAsync()
-    {
-        return Task.CompletedTask;
     }
 
     private string? _Greetee;
